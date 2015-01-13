@@ -1,0 +1,289 @@
+{% extends "vietskill/base.html" %}
+
+{% load staticfiles %}
+{% load extra_tags %}
+
+{% block title %} Meeting {% endblock %}
+
+{% block content %}
+
+    {# Page Heading #}
+    <div class="row" xmlns="http://www.w3.org/1999/html">
+        <div class="col-lg-12">
+            <h1 class="page-header">Meeting</h1>
+            <ol class="breadcrumb">
+                <li>
+                    <i class="fa fa-dashboard"></i> <a href="{% url 'index' %}">Dashboard</a>
+                </li>
+                <li>
+                    <i class="fa fa-gears"></i> <a href="{% url 'meeting' %}">Schedule</a>
+                </li>
+                <li class="active">
+                    <i class="fa fa-bullhorn"></i> Meeting
+                </li>
+            </ol>
+        </div>
+    </div>{# /.row  #}
+
+        <div class="row">
+            <div class="meeting-list" data-spy="scroll" data-target="#myScrollspy">
+
+                <!-- Display all meetings -->
+                <div class="scroll-area inset" data-spy="scroll" data-target="#myNavbar" data-offset="0">
+
+                {%  if meetings %}
+
+                   {% for row in meetings %}
+                    <div class="row">
+
+                        {% for col in row %}
+                        <!-- An event block -->
+                        <div class="col-lg-6">
+                        <!--
+                            <div class="event-block"  data-toggle="modal" data-target="#myModal"
+                          -->
+                          <div class="event-block"
+
+                                data-json='{ "id": {{ col.id }},
+                                "date": "{{ col.date_time|date:"m/d/o" }}",
+                                "time": "{{ col.date_time|time:"G:i"  }}",
+                                "location": "{{ col.location }}",
+                                "purpose": "{{ col.purpose }}",
+                                "attendants": "{{ col.attendants }}"}'>
+                                <div class="event-time color{{ col.id|mod:5 }} pull-left">
+                                    <span class="uppercase"><b> {{ col.date_time|date:"D, M" }} </b></span> <br/>
+                                    <span class="event-day"><b> {{ col.date_time|date:"d" }}</b></span><br />
+                                    <span class="event-hour">{{ col.date_time|time:"P" }}</span>
+                                </div>
+                                <p class="event-detail pull-left"><b class="event-room">{{ col.purpose }}</b>
+                                {{ col.location }}<br />
+                                {%  for p in col.meetingpaticipant_set.all %}
+                                    <a href="{{ p.email }}">{{ p.name }}</a> |
+                                {% endfor %}
+                                </p>
+                            </div>
+                        </div>
+                        <!-- Event ends -->
+                        {% endfor %}
+                        {# End display a column #}
+                    </div>
+                    {% endfor %}
+                    {# End all rows #}
+
+                {% endif %}
+
+                </div>
+                <!-- Event row ends -->
+
+        </div>{# /.row  #}
+    </div>
+    <!-- Another inner -->
+    {% if user.is_authenticated %}
+    <!-- Form -->
+    <div class="row">
+        <div class="col-lg-12">
+            <form action="{% url 'new_meeting' %}" class="event-form" method="POST">
+            {% csrf_token %}
+
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="row">
+
+                      <div class="col-lg-6">
+                        <div class="form-group">
+                            <label for="inputLocation">Location</label>
+                            <input type="text" class="form-control" name="location" id="inputLocation" placeholder="Enter location">
+                        </div>
+                      </div>
+
+                      <div class="col-lg-6">
+                          <label for="inputTime">Date Time</label>
+                          <div class="form-inline">
+                              <div class="form-group">
+                                <input type="text" id="input_date" name="date" class="form-control" placeholder="Date">
+                              </div>
+                              <div class="form-group">
+                                <input type="text" id="input_time" name="time" class="form-control" placeholder="Time">
+                              </div>
+                          </div>
+                      </div>
+
+                      </div>
+                    </div>
+                </div>
+
+
+              <div class="rơw">
+                    <div class="row">
+                          <div class="col-lg-6">
+                              <div class="form-group">
+                                <label for="inputTime">Purpose</label>
+                                <textarea class="form-control" name="purpose" id="inputPurpose" placeholder="Enter meeting purpose" rows="3"></textarea>
+                              </div>
+
+                          </div>
+
+                          <div class="col-lg-6">
+                              <label for="inputTime">Attendants</label>
+                              <div class="form-group">
+                                <input type="text" data-role="tagsinput" name="attendants" class="form-control" id="inputAttandants" placeholder="Enter people" />
+                              </div>
+                          </div>
+                    </div>
+              </div>
+
+              <hr/>
+              <button type="submit" class="btn btn-success">Create meeting</button>
+            </form>
+    <!-- End form -->
+    </div>
+    </div>
+    {% endif %}
+<!-- Modal -->
+    {% if user.is_authenticated %}
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form class="event-form" method="POST" action="{% url 'update_meeting' pk=0 %}">
+      {% csrf_token %}
+
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">Edit Meeting</h4>
+      </div>
+      <div class="modal-body">
+
+
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="row">
+
+                      <div class="col-lg-6">
+                        <div class="form-group">
+                            <label for="inputLocation">Location</label>
+                            <input type="text" name="location" class="form-control" id="inputLocation" placeholder="Enter location">
+                        </div>
+                      </div>
+
+                      <div class="col-lg-6">
+                          <label for="inputTime">Date Time</label>
+                          <div class="form-inline">
+                              <div class="form-group">
+                                <input type="text" name="date" class="form-control" placeholder="Date">
+                              </div>
+                              <div class="form-group">
+                                <input type="text" name="time" class="form-control" placeholder="Time">
+                              </div>
+                          </div>
+                      </div>
+
+                      </div>
+                    </div>
+                </div>
+
+              <div class="rơw">
+                    <div class="row">
+                          <div class="col-lg-6">
+                              <div class="form-group">
+                                <label for="inputTime">Purpose</label>
+                                <textarea class="form-control" name="purpose" id="inputPurpose" placeholder="Enter meeting purpose" rows="3"></textarea>
+                              </div>
+
+                          </div>
+
+                          <div class="col-lg-6">
+                              <label for="inputTime">Attendants</label>
+                              <div class="form-group">
+                                <input type="text" data-role="tagsinput" name="attendants" class="form-control" id="inputAttandants" placeholder="Enter people" />
+                              </div>
+                          </div>
+                    </div>
+              </div>
+
+
+
+      <div class="modal-footer">
+        <button type="submit" class="btn btn-primary">Save changes</button>
+        <a href="{% url 'delete_meeting' pk=0 %}" type="button" class="btn btn-danger delete_item">Delete</a>
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+    </form>
+
+  </div>
+      {% endif %}
+</div>
+
+
+
+<script src="{% static 'plugins/jquery-ui/jquery-ui.min.js' %}"></script>
+
+<script>
+// Load Staff data
+var data = [];
+var staff_objects = {};
+{% for staff in staffs  %}
+    var staff_dict = {"value": {{  staff.id }}, "text": "{{  staff.name }}", "email": "{{  staff.email }}" }
+    data.push(staff_dict);
+    staff_objects[String({{  staff.id }})] = staff_dict;
+
+{% endfor %}
+var staff_data = new Bloodhound({
+  datumTokenizer: Bloodhound.tokenizers.obj.whitespace('text'),
+  queryTokenizer: Bloodhound.tokenizers.whitespace,
+  local: data
+});
+staff_data.initialize();
+
+var elt = $('input#inputAttandants');
+elt.tagsinput({
+  tagClass: function(item) {
+    switch (item.value % 5 + 1) {
+      case 1    : return 'label label-primary';
+      case 2    : return 'label label-danger label-important';
+      case 3    : return 'label label-success';
+      case 4    : return 'label label-default';
+      case 5    : return 'label label-warning';
+    }
+  },
+  itemValue: 'value',
+  itemText: 'text',
+  typeaheadjs: {
+    name: 'staff_data',
+    displayKey: 'text',
+    source: staff_data.ttAdapter()
+  }
+});
+// Load some staffs
+elt.tagsinput('add', data[0]);
+elt.tagsinput('add', data[1]);
+elt.tagsinput('add', data[2]);
+elt.tagsinput('add', data[3]);
+elt.tagsinput('add', data[4]);
+elt.tagsinput('add', data[5]);
+elt.tagsinput('add', data[6]);
+elt.tagsinput('add', data[7]);
+elt.tagsinput('add', data[8]);
+elt.tagsinput('add', data[9]);
+
+// Run timepicker
+function DemoTimePicker(){
+	$('#input_time').timepicker({setDate: new Date()});
+}
+
+$(document).ready(function() {
+    // Initialize datepicker
+    $('#input_date').datepicker({setDate: new Date()});
+    // Load Timepicker plugin
+    LoadTimePickerScript(DemoTimePicker);
+    OpenMeetingModal()
+})
+
+</script>
+
+
+
+
+
+
+{% endblock %}

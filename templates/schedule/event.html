@@ -1,0 +1,98 @@
+{% extends "vietskill/base.html" %}
+
+{% load staticfiles %}
+
+{% block title %} Event {% endblock %}
+
+{% block content %}
+
+    {# Page Heading #}
+    <div class="row" xmlns="http://www.w3.org/1999/html">
+        <div class="col-lg-12">
+            <h1 class="page-header">Event</h1>
+            <ol class="breadcrumb">
+                <li>
+                    <i class="fa fa-dashboard"></i> <a href="{% url 'index' %}">Dashboard</a>
+                </li>
+                <li>
+                    <i class="fa fa-gears"></i> <a href="{% url 'event' %}">Schedule</a>
+                </li>
+                <li class="active">
+                    <i class="fa fa-calendar"></i> Event
+                </li>
+            </ol>
+        </div>
+    </div>{# /.row  #}
+
+    <!-- Calendar -->
+    <div class="row full-calendar">
+    {% if user.is_authenticated %}
+	<div class="col-sm-3">
+		<div id="add-new-event">
+			<h4 class="new-event-header">Add new event</h4>
+			<div class="form-group">
+				<label>Event title</label>
+				<input type="text" name="title" id="new-event-title" class="form-control">
+			</div>
+			<div class="form-group">
+				<label>Location</label>
+				<input type="text" name="location" id="new-event-location" class="form-control">
+			</div>
+			<div class="form-group">
+				<label>Event description</label>
+				<textarea name="content" class="form-control" id="new-event-desc" rows="3"></textarea>
+			</div>
+			<a href="#" id="new-event-add" class="btn btn-primary pull-right">Add event</a>
+			<div class="clearfix"></div>
+		</div>
+		<div id="external-events">
+			<h4 class="page-header" id="events-templates-header">Drag Event to Calendar</h4>
+		</div>
+	</div>
+        {% endif %}
+	<div class="col-sm-9">
+		<div id="calendar"></div>
+	</div>
+</div>
+
+    {% if user.is_authenticated %}
+<div class="modal fade" id="modalbox" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form class="event-form" id="event_form">
+        {% csrf_token %}
+
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title" id="myModalLabel">Edit Event</h4>
+          </div>
+
+          <div class="modal-body">
+          </div>
+
+          <div class="modal-footer">
+          </div>
+
+      </form>
+
+    </div>
+  </div>
+</div>
+{% endif %}
+
+<script>
+$(document).ready(function() {
+	// Set Block Height
+	SetMinBlockHeight($('#calendar'));
+	// Create Calendar
+	DrawFullCalendar();
+    // Load Data
+    // $('#calendar').data('fullCalendar').addEventSource(EVENTS_JSON);
+
+});
+
+</script>
+
+<!-- End of calendar -->
+
+{% endblock %}

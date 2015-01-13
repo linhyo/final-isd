@@ -1,0 +1,72 @@
+{% extends "vietskill/base.html" %}
+
+{% load staticfiles %}
+
+{% block title %} Online office day {% endblock %}
+
+{% block content %}
+
+    {# Page Heading #}
+    <div class="row">
+        <div class="col-lg-12">
+            <h1 class="page-header">Online office day</h1>
+            <ol class="breadcrumb">
+                <li>
+                    <i class="fa fa-dashboard"></i> <a href="{% url 'index' %}">Dashboard</a>
+                </li>
+                <li>
+                    <i class="fa fa-gears"></i> <a href="#">Statistics</a>
+                </li>
+                <li class="active">
+                    <i class="fa fa-line-chart"></i> Online office day
+                </li>
+            </ol>
+        </div>
+    </div>{# /.row  #}
+
+    <div class="row">
+        <div class="col-lg-12 text-center">
+            <div id="chartContainer" style="height: 400px; width: 100%;"></div>
+        </div>
+    </div>{# /.row  #}
+    <script type="text/javascript">
+        window.onload = function () {
+            var chart = new CanvasJS.Chart("chartContainer",
+                    {
+                        title: {
+                            text: "Online office hour",
+                            fontSize: 25
+                        },
+                        axisX: {
+                            valueFormatString: "MMM",
+                            interval: 1,
+                            intervalType: "month"
+
+                        },
+
+                        data: [
+                            {
+                                indexLabelFontColor: "green",
+                                type: "area",
+                                dataPoints: [//array
+
+                                    { x: new Date(2014, 00, 1), y: 2600},
+                                    { x: new Date(2014, 01, 1), y: 3800 },
+                                    { x: new Date(2014, 02, 1), y: 4300 },
+                                    { x: new Date(2014, 03, 1), y: 2900 },
+                                    { x: new Date(2014, 04, 1), y: 4100 },
+                                    { x: new Date(2014, 05, 1), y: 4500 },
+                                    { x: new Date(2014, 06, 1), y: 8600 },
+                                    { x: new Date(2014, 07, 1), y: 6400 },
+                                    { x: new Date(2014, 08, 1), y: 5300 },
+                                    { x: new Date(2014, 09, 1), y: 6000}
+                                ]
+                            }
+                        ]
+                    });
+
+            chart.render();
+        }
+    </script>
+    <script type="text/javascript" src="{% static 'js/canvasjs.min.js' %}"></script>
+{% endblock %}

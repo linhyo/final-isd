@@ -1,0 +1,68 @@
+{% extends "vietskill/base.html" %}
+
+{% load staticfiles %}
+
+{% block title %} Mistake {% endblock %}
+
+{% block content %}
+
+    {# Page Heading #}
+    <div class="row">
+        <div class="col-lg-12">
+            <h1 class="page-header">Mistake</h1>
+            <ol class="breadcrumb">
+                <li>
+                    <i class="fa fa-dashboard"></i> <a href="{% url 'index' %}">Dashboard</a>
+                </li>
+                <li>
+                    <i class="fa fa-gears"></i> <a href="#">Statistics</a>
+                </li>
+                <li class="active">
+                    <i class="fa fa-pie-chart"></i> Mistake
+                </li>
+            </ol>
+        </div>
+    </div>{# /.row  #}
+
+    <div class="row">
+        <div class="col-lg-12">
+            <div id="chartContainer" style="height: 400px; width: 100%;"></div>
+        </div>
+    </div>{# /.row  #}
+
+    <script type="text/javascript">
+        window.onload = function () {
+            var chart = new CanvasJS.Chart("chartContainer",
+                    {
+                        theme: "theme2",
+                        title: {
+                            text: "Vietskill Teaching Mistakes"
+                        },
+                        legend: {
+                            verticalAlign: "bottom",
+                            horizontalAlign: "center"
+                        },
+                        data: [
+                            {
+                                type: "pie",
+                                showInLegend: true,
+                                toolTipContent: "{y} - #percent %",
+                                yValueFormatString: "#0.#,,. times",
+                                dataPoints: [
+                                    {  y: 4181563, legendText: "T", indexLabel: "Teach without clear learning objectives" },
+                                    {  y: 2175498, legendText: "H", indexLabel: "Have students work in groups with no individual accountability" },
+                                    {  y: 3125844, legendText: "G", indexLabel: "Give tests that are too long" },
+                                    {  y: 1176121, legendText: "F", indexLabel: "Fail to establish relevance"},
+                                    {  y: 1727161, legendText: "I", indexLabel: "Ignore small behavior problems" },
+                                    {  y: 4303364, legendText: "B", indexLabel: "Become involved in school 'politics'"},
+                                    {  y: 1717786, legendText: "A", indexLabel: "Avoid asking for help"}
+                                ]
+                            }
+                        ]
+                    });
+            chart.render();
+        }
+    </script>
+
+    <script type="text/javascript" src="{% static 'js/canvasjs.min.js' %}"></script>
+{% endblock %}
